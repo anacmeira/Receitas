@@ -1,20 +1,25 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+// 1. Importamos a lista de receitas do arquivo de dados
+import { recipes } from "@/lib/data"; 
+// 2. Importamos o componente do card que criamos acima
+import RecipeCard from "@/components/RecipeCard"; 
 
 export default function Home(){
+  // Exatamente como o professor fez: pega apenas as 3 primeiras receitas da lista
+  const featuredRecipes = recipes.slice(0, 3);
+
   return(
     <main className="flex-grow bg-amber-50/40">
-      {/* Seção Hero*/}
+      {/* Seção Hero */}
       <section className="bg-amber-100/50 py-4 md:py-6 border-b border-amber-200/60 px-4">
         <div className="flex flex-col gap-3 items-center container mx-auto text-center max-w-5xl">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-amber-950 tracking-tight">
             Receitas Mineiras
           </h1>
-          
           <p className="text-xs sm:text-sm text-amber-900/90 font-medium max-w-xl leading-relaxed">
             Descubra receitas simples, afetivas e saborosas com aquele gostinho único de comida de vó.
           </p>
-          
           <Link 
             className="bg-amber-800 hover:bg-amber-900 active:scale-95 transition-all text-white font-semibold rounded-lg px-4 py-1.5 shadow-sm text-xs" 
             href="/receitas"
@@ -38,7 +43,11 @@ export default function Home(){
             Ver todas as receitas <ChevronRight className="w-4 h-4" />
           </Link>
 
+          {/* O Grid dinâmico usando o mecanismo do .map() igualzinho ao da foto */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            {featuredRecipes.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
           </div>
         </div>
       </section>

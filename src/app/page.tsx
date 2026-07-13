@@ -1,24 +1,45 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 export default function Home(){
   return(
     <main className="flex-grow bg-amber-50/40">
-      <section className="bg-amber-100/50 py-16 md:py-24 border-b border-amber-200/60 px-4">
-        <div className="flex flex-col gap-6 items-center container mx-auto text-center max-w-3xl">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-amber-950 tracking-tight">
+      {/* Seção Hero*/}
+      <section className="bg-amber-100/50 py-4 md:py-6 border-b border-amber-200/60 px-4">
+        <div className="flex flex-col gap-3 items-center container mx-auto text-center max-w-5xl">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-amber-950 tracking-tight">
             Receitas Mineiras
           </h1>
           
-          <p className="text-base sm:text-lg md:text-xl text-amber-900/90 font-medium max-w-xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-amber-900/90 font-medium max-w-xl leading-relaxed">
             Descubra receitas simples, afetivas e saborosas com aquele gostinho único de comida de vó.
           </p>
           
           <Link 
-            className="bg-amber-800 hover:bg-amber-900 active:scale-95 transition-all text-white font-semibold rounded-xl px-6 py-3 shadow-md hover:shadow-lg text-sm sm:text-base" 
+            className="bg-amber-800 hover:bg-amber-900 active:scale-95 transition-all text-white font-semibold rounded-lg px-4 py-1.5 shadow-sm text-xs" 
             href="/receitas"
           >
             Ver todas as receitas
           </Link>
+        </div>
+      </section>
+
+      {/* Seção receitas em destaque */}
+      <section className="py-8 px-4">
+        <div className="flex flex-col items-center container mx-auto text-center max-w-5xl">
+          <h2 className="text-xl font-bold text-amber-950 mb-1">
+            Receitas em destaque
+          </h2>
+          
+          <Link 
+            className="flex items-center gap-1 text-amber-700 hover:text-amber-900 text-sm font-medium transition-colors mb-6" 
+            href="/receitas"
+          >
+            Ver todas as receitas <ChevronRight className="w-4 h-4" />
+          </Link>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          </div>
         </div>
       </section>
     </main>

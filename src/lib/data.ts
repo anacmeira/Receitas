@@ -71,32 +71,117 @@ export const recipes: Recipe[] = [
     category: "Prato Principal"
   },
   {
-    id: "3",
-    title: "Frango com Quiabo à Moda de Minas",
-    description: "Um clássico absoluto dos almoços de domingo. O segredo está em refogar o quiabo direitinho para tirar toda a baba e selar bem o frango.",
-    image: "/receitas/frango-quiabo.png",
-    prepTime: "30 minutos",
-    cookTime: "50 minutos",
+  id: "3",
+  title: "Doce de Leite de Corte Tradicional",
+  description: "O autêntico doce de tacho mineiro. O segredo está em mexer sem parar até dar o ponto de bloco e bater bem depois de desligar o fogo para ficar bem macio.",
+  image: "/receitas/doce-leite.png",
+  prepTime: "10 minutos",
+  cookTime: "40 minutos",
+  servings: 12,
+  ingredients: [
+    "2 litros de leite integral fresco",
+    "4 xícaras de açúcar refinado",
+    "1 colher de chá de bicarbonato de sódio (segredo para dar a cor bonita)",
+    "1 colher de sopa de manteiga para untar a bancada"
+  ],
+  instructions: [
+    "Em um tacho de cobre ou panela de fundo grosso, misture bem o leite, o açúcar e o bicarbonato de sódio.",
+    "Leve ao fogo médio para alto, mexendo de vez em quando no início, até a mistura ferver e começar a reduzir.",
+    "Assim que o doce começar a engrossar e ganhar aquela cor linda de doce de leite, reduza o fogo para o mínimo e mexa sem parar para não queimar o fundo.",
+    "Continue mexendo até o doce soltar totalmente do fundo da panela, atingindo o ponto de bloco (quando você joga um pouco num prato frio e ele não escorre).",
+    "Retire a panela do fogo e, com uma colher de pau, bata o doce vigorosamente por cerca de 3 a 5 minutos até ele perder o brilho e começar a açucarar nas bordas.",
+    "Despeje o doce rapidamente sobre uma bancada de pedra ou fôrma previamente untada com manteiga, alisando a superfície com uma espátula.",
+    "Deixe amornar por alguns minutos e faça os cortes em quadradinhos com uma faca antes que o doce esfrie totalmente e endureça."
+  ],
+  category: "Sobremesa"
+},
+{
+    id: "4",
+    title: "Tutu de Feijão com Torresmo",
+    description: "Aquele feijão batido, engrossado com farinha de mandioca e temperado na banha de porco com alho e cebola. Servido bem quentinho com couve e torresmo pururuca.",
+    image: "/receitas/tutu-feijao.png",
+    prepTime: "20 minutos",
+    cookTime: "30 minutos",
     servings: 6,
     ingredients: [
-      "1 frango inteiro cortado em pedaços",
-      "500g de quiabo fresco",
-      "1 cebola grande picadinha",
-      "4 dentes de alho amassados",
-      "2 colheres de sopa de óleo (ou banha de porco)",
-      "1 colher de sopa de colorau (urucum)",
-      "Sal e pimenta-do-reino a gosto",
-      "Cheiro-verde picado a gosto"
+      "4 xícaras de feijão preto ou carioquinha cozido (com o caldo)",
+      "1 xícara de farinha de mandioca crua",
+      "150g de bacon ou bacon picadinho",
+      "1 cebola média picada",
+      "3 dentes de alho amassados",
+      "Torresmo frito a gosto para finalizar",
+      "Couve cortada fininha e refogada para acompanhar",
+      "Cheiro-verde, sal e pimenta-do-reino a gosto"
     ],
     instructions: [
-      "Tempere o frango com alho, sal e pimenta-do-reino. Deixe marinar por pelo menos 20 minutos.",
-      "Lave e seque muito bem os quiabos. Corte-os em rodelas de cerca de 1cm.",
-      "Em uma panela, aqueça uma colher de óleo e refogue o quiabo em fogo médio, mexendo de vez em quando, até que pare de babar. Retire o quiabo da panela e reserve.",
-      "Na mesma panela, adicione o restante do óleo/banha e o colorau. Sele bem os pedaços de frango até dourarem.",
-      "Adicione a cebola e refogue junto com o frango. Cubra com água morna até a metade do frango, tampe e deixe cozinhar até a carne ficar macia.",
-      "Quando o caldo estiver apurado, adicione o quiabo reservado e cozinhe por mais 5 a 10 minutos sem mexer muito.",
-      "Finalize com cheiro-verde e sirva com angu e arroz branco."
+      "Bata o feijão cozido no liquidificador com o seu próprio caldo até virar um creme e reserve.",
+      "Em uma panela de ferro, frite o bacon até soltar a gordura e dourar. Se necessário, retire o excesso de gordura deixando cerca de 2 colheres de sopa.",
+      "Na mesma panela com a gordura do bacon, refogue o alho e a cebola até dourarem.",
+      "Despeje o feijão batido na panela, tempere com sal e pimenta-do-reino e deixe levantar fervura.",
+      "Reduza o fogo e vá adicionando a farinha de mandioca aos poucos, em chuva, mexendo sem parar para não empelotar, até atingir a consistência de um pirão mole.",
+      "Deixe cozinhar por cerca de 5 a 8 minutos para a farinha cozinhar bem.",
+      "Transfira para uma travessa, cubra com o bacon frito, cheiro-verde e o torresmo crocante. Sirva com a couve refogada ao lado."
+    ],
+    category: "Acompanhamento"
+  },
+  {
+    id: "5",
+    title: "Canjiquinha com Costelinha de Porco",
+    description: "Também conhecida como quirera de milho, cozida lentamente com costelinha de porco frita na própria gordura até derreter na boca. Conforto puro em forma de prato.",
+    image: "/receitas/canjiquinha.png",
+    prepTime: "30 minutos",
+    cookTime: "60 minutos",
+    servings: 8,
+    ingredients: [
+      "1 xícara de canjiquinha de milho (quirera)",
+      "800g de costelinha de porco cortada em pedaços pequenos",
+      "1 colher de sopa de banha de porco ou óleo",
+      "1 cebola grande picada",
+      "4 dentes de alho amassados",
+      "1 colher de sopa de colorau",
+      "Suco de 1 limão",
+      "Sal, pimenta-biquinho e pimenta-do-reino a gosto",
+      "Cheiro-verde picadinho a gosto"
+    ],
+    instructions: [
+      "Lave a canjiquinha em água corrente e deixe de molho em água morna por 30 minutos.",
+      "Tempere as costelinhas de porco com o suco de limão, alho, sal e pimenta-do-reino. Deixe pegar gosto por 20 minutos.",
+      "Em uma panela grande, aqueça a banha de porco e frite as costelinhas até ficarem bem douradas. Retire o excesso de óleo que soltar.",
+      "Adicione a cebola e o colorau junto à carne e refogue até a cebola murchar.",
+      "Escorra a canjiquinha do molho e jogue na panela com a costelinha. Refogue por 2 minutos.",
+      "Adicione água fervente aos poucos (cerca de 1,5 a 2 litros no total ao longo do cozimento), mexendo sempre para a canjiquinha não grudar no fundo.",
+      "Deixe cozinhar em fogo baixo por cerca de 45 minutos, ou até que o milho esteja macio e o caldo esteja bem grosso e cremoso. Finalize com cheiro-verde e pimenta-biquinho."
     ],
     category: "Prato Principal"
+  },
+  {
+    id: "6",
+    title: "Broa de Fubá de Moinho D'Água",
+    description: "Aquela broinha de fubá legítima, aerada, perfeita para abrir ao meio e passar uma manteiga que derrete na hora. O verdadeiro acompanhamento do café mineiro.",
+    image: "/receitas/broa-fuba.png",
+    prepTime: "20 minutos",
+    cookTime: "30 minutos",
+    servings: 15,
+    ingredients: [
+      "2 xícaras de fubá mimoso ou de moinho d'água",
+      "2 xícaras de farinha de trigo",
+      "1 e 1/2 xícara de açúcar",
+      "1 colher de sopa de fermento químico em pó",
+      "1 colher de sopa de sementes de erva-doce (essencial!)",
+      "3 ovos médios",
+      "3 colheres de sopa de manteiga em temperatura ambiente",
+      "Aproximadamente 1/2 xícara de leite integral (até dar o ponto)"
+    ],
+    instructions: [
+      "Em uma tigela grande, misture bem os ingredientes secos: o fubá, a farinha de trigo, o açúcar, o fermento e as sementes de erva-doce.",
+      "Abra um buraco no centro e adicione os ovos levemente batidos e a manteiga.",
+      "Misture com as mãos, incorporando os ingredientes. Vá adicionando o leite bem aos poucos, colher por colher, até obter uma massa macia que desgrude das mãos (cuidado para não deixar mole demais).",
+      "Pré-aqueça o forno a 180°C e unte uma assadeira grande com manteiga e fubá.",
+      "Modele bolinhas do tamanho de uma bola de pingue-pongue. O truque tradicional é passar um pouquinho de fubá nas mãos ou moldar a broinha chacoalhando a massa dentro de uma xícara polvilhada com fubá.",
+      "Coloque as broas na assadeira deixando um espaço de 3cm entre elas, pois elas crescem.",
+      "Leve ao forno por cerca de 25 a 30 minutos ou até que a base esteja dourada e o topo comece a rachar levemente. Sirva morna!"
+    ],
+    category: "Café da Tarde"
   }
+
 ]

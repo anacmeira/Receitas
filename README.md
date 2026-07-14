@@ -38,4 +38,4 @@ Siga os passos abaixo para rodar o projeto na sua máquina:
 
 ### 1. Clonar o repositório
 ```bash
-git clone 
+git clone https://github.com/anacmeira/Receitas.git

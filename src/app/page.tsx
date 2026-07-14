@@ -1,12 +1,9 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-// 1. Importamos a lista de receitas do arquivo de dados
 import { recipes } from "@/lib/data"; 
-// 2. Importamos o componente do card que criamos acima
 import RecipeCard from "@/components/RecipeCard"; 
 
 export default function Home(){
-  // Exatamente como o professor fez: pega apenas as 3 primeiras receitas da lista
   const featuredRecipes = recipes.slice(0, 3);
 
   return(
@@ -43,7 +40,7 @@ export default function Home(){
             Ver todas as receitas <ChevronRight className="w-4 h-4" />
           </Link>
 
-          {/* O Grid dinâmico usando o mecanismo do .map() igualzinho ao da foto */}
+          {/* Grid Dinâmico */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
             {featuredRecipes.map((recipe) => (
               <RecipeCard key={recipe.id} recipe={recipe} />

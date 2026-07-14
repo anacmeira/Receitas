@@ -14,6 +14,7 @@ export default function ReceitasPage() {
           Explore o caderno completo de delícias mineiras, do salgado ao doce tradicional.
         </p>
 
+        {/* Grid com todas as receitas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
           {recipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />

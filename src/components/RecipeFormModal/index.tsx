@@ -1,277 +1,340 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useFieldArray, useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Dialog, DialogHeader, DialogTitle, DialogContent } from "@/components/ui/dialog";
 import { Recipe } from "@/lib/data";
+import { recipeSchema, RecipeFormData } from "../../lib/formValidationSchemas/recipeSchema";
 
 interface RecipeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (recipe: Omit<Recipe, "id"> | Recipe) => void;
-  mode?: "create" | "edit";
+  mode: "create" | "edit";
   recipe?: Recipe;
 }
+
+const DEFAULT_VALUES: RecipeFormData = {
+  title: "",
+  category: "",
+  description: "",
+  imageURL: "",
+  prepTime: "",
+  cookTime: "",
+  servings: 1,
+  ingredients: [{ value: "" }],
+  instructions: [{ value: "" }],
+};
 
 export default function RecipeFormModal({
   isOpen,
   onClose,
   onSave,
-  mode = "create",
+  mode,
   recipe,
 }: RecipeFormModalProps) {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [prepTime, setPrepTime] = useState("");
-  const [cookTime, setCookTime] = useState("");
-  const [servings, setServings] = useState("1");
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm<RecipeFormData>({
+    resolver: yupResolver(recipeSchema),
+    mode: "onSubmit",
+    defaultValues: DEFAULT_VALUES,
+  });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const {
+    fields: ingredientFields,
+    append: appendIngredients,
+    remove: removeIngredients,
+  } = useFieldArray({
+    control,
+    name: "ingredients",
+  });
+
+  const {
+    fields: instructionFields,
+    append: appendInstructions,
+    remove: removeInstructions,
+  } = useFieldArray({
+    control,
+    name: "instructions",
+  });
 
   useEffect(() => {
     if (isOpen) {
-      setErrors({});
       if (mode === "edit" && recipe) {
-        setTitle(recipe.title || "");
-        setCategory(recipe.category || "");
-        setDescription(recipe.description || "");
-        setImageUrl(recipe.image || "");
-        setPrepTime(recipe.prepTime || "");
-        setCookTime(recipe.cookTime || "");
-        setServings(String(recipe.servings || "1"));
+        const { image, ...restRecipe } = recipe;
+
+        reset({
+          ...restRecipe,
+          imageURL: image,
+          ingredients:
+            recipe.ingredients && recipe.ingredients.length > 0
+              ? recipe.ingredients.map((ing) => ({ value: ing }))
+              : [{ value: "" }],
+          instructions:
+            recipe.instructions && recipe.instructions.length > 0
+              ? recipe.instructions.map((inst) => ({ value: inst }))
+              : [{ value: "" }],
+        });
       } else {
-        setTitle("");
-        setCategory("");
-        setDescription("");
-        setImageUrl("");
-        setPrepTime("");
-        setCookTime("");
-        setServings("1");
+        reset(DEFAULT_VALUES);
       }
     }
-  }, [isOpen, mode, recipe]);
+  }, [mode, isOpen, recipe, reset]);
 
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
+  const onSubmit: SubmitHandler<RecipeFormData> = (data) => {
+    const { imageURL, ingredients, instructions, ...restData } = data;
 
-    if (!title.trim()) newErrors.title = "O título é obrigatório.";
-    if (!category.trim()) newErrors.category = "A categoria é obrigatória.";
-    if (!description.trim()) newErrors.description = "A descrição é obrigatória.";
-    if (!servings || Number(servings) <= 0) {
-      newErrors.servings = "Porções deve ser maior que 0.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validate()) return;
-
-    const newRecipeData = {
-      title,
-      category,
-      description,
-      image: imageUrl || "/placeholder.svg?height=400&width=600",
-      prepTime,
-      cookTime,
-      servings: Number(servings) || 1,
-      ingredients: recipe?.ingredients || [],
-      instructions: recipe?.instructions || [],
+    const recipeData = {
+      ...restData,
+      image: imageURL,
+      ingredients: (ingredients ?? [])
+        .map((ingredient) => ingredient.value.trim())
+        .filter((val) => val !== ""),
+      instructions: (instructions ?? [])
+        .map((instruction) => instruction.value.trim())
+        .filter((val) => val !== ""),
     };
 
-    console.log("Receita enviada do modal:", newRecipeData);
-
     onSave(
-      mode === "edit" && recipe
-        ? { ...newRecipeData, id: recipe.id }
-        : newRecipeData
+      mode === "edit" && recipe ? { ...recipeData, id: recipe.id } : recipeData
     );
-
-    alert(mode === "edit" ? "Receita editada!" : "Receita criada com sucesso!");
+    reset(DEFAULT_VALUES);
     onClose();
   };
 
-  const inputStyle = "w-full px-3 py-2 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500";
-  const btnSecondaryStyle = "px-4 py-2 bg-white border border-amber-200 text-amber-950 rounded-lg hover:bg-amber-100 transition-colors text-sm font-medium h-fit cursor-pointer";
+  // Altura fixa h-[42px] + box-border garante que todos os inputs fiquem idênticos
+  const inputStyle =
+    "w-full h-[42px] px-3.5 py-2.5 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-normal box-border";
+  
+  const btnSecondaryStyle =
+    "px-4 py-2.5 bg-white border border-amber-200 text-amber-950 rounded-lg hover:bg-amber-100 transition-colors text-sm font-medium leading-normal cursor-pointer whitespace-nowrap shrink-0";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-amber-50/95 border-amber-200 text-amber-950 w-full max-w-2xl rounded-2xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-amber-50/95 border-amber-200 text-amber-950 w-[95vw] max-w-6xl rounded-2xl p-8 shadow-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-extrabold text-amber-950 tracking-tight">
+          <DialogTitle className="text-2xl font-extrabold text-amber-950 tracking-tight">
             {mode === "create" ? "Nova receita" : "Editar receita"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-2 text-left" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6 mt-3 text-left"
+          noValidate
+        >
           {/* Título e Categoria */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-amber-950 mb-1 whitespace-nowrap">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div className="flex flex-col">
+              <label htmlFor="title" className="text-xs font-semibold text-amber-950 mb-1.5">
                 Título
               </label>
               <input
+                id="title"
                 type="text"
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  if (errors.title) setErrors((prev) => ({ ...prev, title: "" }));
-                }}
-                className={`w-full px-3 py-2 bg-white border rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 ${
-                  errors.title ? "border-red-500 focus:ring-red-500" : "border-amber-200 focus:ring-amber-500"
-                }`}
+                className={inputStyle}
+                {...register("title")}
               />
-              {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
+              {errors.title && (
+                <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>
+              )}
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-amber-950 mb-1 whitespace-nowrap">
+            <div className="flex flex-col">
+              <label htmlFor="category" className="text-xs font-semibold text-amber-950 mb-1.5">
                 Categoria
               </label>
               <input
+                id="category"
                 type="text"
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  if (errors.category) setErrors((prev) => ({ ...prev, category: "" }));
-                }}
-                className={`w-full px-3 py-2 bg-white border rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 ${
-                  errors.category ? "border-red-500 focus:ring-red-500" : "border-amber-200 focus:ring-amber-500"
-                }`}
+                className={inputStyle}
+                {...register("category")}
               />
-              {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
+              {errors.category && (
+                <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>
+              )}
             </div>
           </div>
 
           {/* Descrição */}
-          <div>
-            <label className="block text-xs font-semibold text-amber-950 mb-1">
+          <div className="flex flex-col">
+            <label htmlFor="description" className="text-xs font-semibold text-amber-950 mb-1.5">
               Descrição
             </label>
             <textarea
+              id="description"
               rows={3}
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-                if (errors.description) setErrors((prev) => ({ ...prev, description: "" }));
-              }}
-              className={`w-full px-3 py-2 bg-white border rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 resize-y ${
-                errors.description ? "border-red-500 focus:ring-red-500" : "border-amber-200 focus:ring-amber-500"
-              }`}
+              className="w-full px-3.5 py-2.5 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-normal resize-y"
+              {...register("description")}
             />
-            {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
+            {errors.description && (
+              <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
+            )}
           </div>
 
           {/* URL da imagem */}
-          <div>
-            <label className="block text-xs font-semibold text-amber-950 mb-1">
+          <div className="flex flex-col">
+            <label htmlFor="image" className="text-xs font-semibold text-amber-950 mb-1.5">
               URL da imagem
             </label>
             <input
+              id="image"
               type="text"
               placeholder="/placeholder.svg"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
               className={inputStyle}
+              {...register("imageURL")}
             />
+            {errors.imageURL && (
+              <p className="text-red-500 text-xs mt-1">{errors.imageURL.message}</p>
+            )}
           </div>
 
-          {/* Tempos e Porções */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-amber-950 mb-1 whitespace-nowrap">
+          {/* Tempos e Porções (Alinhados perfeitamente na base com items-end) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            <div className="flex flex-col justify-end">
+              <label htmlFor="prepTime" className="text-xs font-semibold text-amber-950 mb-1.5">
                 Tempo de preparo
               </label>
               <input
+                id="prepTime"
                 type="text"
                 placeholder="15 minutos"
-                value={prepTime}
-                onChange={(e) => setPrepTime(e.target.value)}
                 className={inputStyle}
+                {...register("prepTime")}
               />
+              {errors.prepTime && (
+                <p className="text-red-500 text-xs mt-1">{errors.prepTime.message}</p>
+              )}
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-amber-950 mb-1 whitespace-nowrap">
-                Cozimento
+            <div className="flex flex-col justify-end">
+              <label htmlFor="cookTime" className="text-xs font-semibold text-amber-950 mb-1.5">
+                Tempo de cozimento
               </label>
               <input
+                id="cookTime"
                 type="text"
                 placeholder="30 minutos"
-                value={cookTime}
-                onChange={(e) => setCookTime(e.target.value)}
                 className={inputStyle}
+                {...register("cookTime")}
               />
+              {errors.cookTime && (
+                <p className="text-red-500 text-xs mt-1">{errors.cookTime.message}</p>
+              )}
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-amber-950 mb-1 whitespace-nowrap">
+            <div className="flex flex-col justify-end">
+              <label htmlFor="servings" className="text-xs font-semibold text-amber-950 mb-1.5">
                 Porções
               </label>
               <input
+                id="servings"
                 type="number"
                 placeholder="1"
-                value={servings}
-                onChange={(e) => {
-                  setServings(e.target.value);
-                  if (errors.servings) setErrors((prev) => ({ ...prev, servings: "" }));
-                }}
-                className={`w-full px-3 py-2 bg-white border rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 ${
-                  errors.servings ? "border-red-500 focus:ring-red-500" : "border-amber-200 focus:ring-amber-500"
-                }`}
+                className={inputStyle}
+                {...register("servings", { valueAsNumber: true })}
               />
-              {errors.servings && <p className="text-red-500 text-xs mt-1">{errors.servings}</p>}
+              {errors.servings && (
+                <p className="text-red-500 text-xs mt-1">{errors.servings.message}</p>
+              )}
             </div>
           </div>
 
           {/* Lista de Ingredientes */}
-          <div className="flex flex-col gap-2">
-            <label className="block text-xs font-semibold text-amber-950">
+          <div className="flex flex-col gap-2 pt-2">
+            <label className="text-xs font-semibold text-amber-950">
               Ingredientes
             </label>
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2 w-full items-start">
-                <input
-                  type="text"
-                  placeholder="Ex: 2 xícaras de farinha de trigo"
-                  className={inputStyle}
-                />
-                <button type="button" className={btnSecondaryStyle}>
-                  Remover
-                </button>
-              </div>
+            <div className="flex flex-col gap-3">
+              {ingredientFields.map((field, index) => (
+                <div key={field.id} className="flex items-start gap-3 w-full">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      className={inputStyle}
+                      placeholder={`Ingrediente ${index + 1}`}
+                      {...register(`ingredients.${index}.value`)}
+                    />
+                    {errors.ingredients?.[index]?.value && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.ingredients[index]?.value?.message}
+                      </p>
+                    )}
+                  </div>
+                  {ingredientFields.length > 1 && (
+                    <button
+                      type="button"
+                      className={`${btnSecondaryStyle} hover:border-red-300 hover:bg-red-50 hover:text-red-700`}
+                      onClick={() => removeIngredients(index)}
+                    >
+                      Remover
+                    </button>
+                  )}
+                </div>
+              ))}
 
-              <button type="button" className={`${btnSecondaryStyle} w-fit`}>
-                Adicionar ingrediente
+              <button
+                type="button"
+                className={`${btnSecondaryStyle} self-start mt-1`}
+                onClick={() => appendIngredients({ value: "" })}
+              >
+                + Adicionar ingrediente
               </button>
             </div>
           </div>
 
           {/* Lista de Instruções */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="instructions" className="block text-xs font-semibold text-amber-950">
+          <div className="flex flex-col gap-2 pt-2">
+            <label className="text-xs font-semibold text-amber-950">
               Instruções
             </label>
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2 w-full items-start">
-                <textarea id="instructions" rows={2} className={inputStyle} />
-                <button type="button" className={btnSecondaryStyle}>
-                  Remover
-                </button>
-              </div>
+            <div className="flex flex-col gap-3">
+              {instructionFields.map((field, index) => (
+                <div key={field.id} className="flex items-start gap-3 w-full">
+                  <div className="flex-1">
+                    <textarea
+                      rows={2}
+                      className="w-full px-3.5 py-2.5 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-normal resize-y"
+                      placeholder={`Passo ${index + 1}`}
+                      {...register(`instructions.${index}.value`)}
+                    />
+                    {errors.instructions?.[index]?.value && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.instructions[index]?.value?.message}
+                      </p>
+                    )}
+                  </div>
 
-              <button type="button" className={`${btnSecondaryStyle} w-fit`}>
-                Adicionar instrução
+                  {instructionFields.length > 1 && (
+                    <button
+                      type="button"
+                      className={`${btnSecondaryStyle} hover:border-red-300 hover:bg-red-50 hover:text-red-700`}
+                      onClick={() => removeInstructions(index)}
+                    >
+                      Remover
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              <button
+                type="button"
+                className={`${btnSecondaryStyle} self-start mt-1`}
+                onClick={() => appendInstructions({ value: "" })}
+              >
+                + Adicionar instrução
               </button>
             </div>
           </div>
 
           {/* Botões do Rodapé */}
-          <div className="flex justify-end gap-2 pt-3 mt-4">
+          <div className="flex items-center justify-end gap-3 pt-5 mt-6 border-t border-amber-200/60">
             <button
               type="button"
               onClick={onClose}
@@ -281,7 +344,7 @@ export default function RecipeFormModal({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-amber-950 text-amber-50 hover:bg-amber-900 font-semibold text-sm shadow-md transition-colors cursor-pointer"
+              className="px-6 py-2.5 rounded-lg bg-amber-950 text-amber-50 hover:bg-amber-900 font-semibold text-sm shadow-md transition-colors cursor-pointer shrink-0"
             >
               {mode === "create" ? "Criar receita" : "Salvar alterações"}
             </button>

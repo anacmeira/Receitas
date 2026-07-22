@@ -4,16 +4,31 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import RecipeCard from "@/components/RecipeCard";
 import RecipeFormModal from "@/components/RecipeFormModal";
-import { recipes } from "@/lib/data";
+import { recipes as initialRecipes, Recipe } from "@/lib/data";
 
 export default function ReceitasPage() {
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  // Estado para armazenar e atualizar a lista de receitas na tela
+  const [recipeList, setRecipeList] = useState<Recipe[]>(initialRecipes);
+
+  // Função para salvar a nova receita
+  const handleSaveRecipe = (newRecipeData: Omit<Recipe, "id"> | Recipe) => {
+    // Cria uma receita com ID gerado para a lista
+    const newRecipe: Recipe = {
+      ...newRecipeData,
+      id: "id" in newRecipeData ? newRecipeData.id : String(Date.now()),
+    };
+
+    // Adiciona a receita na lista existente
+    setRecipeList((prev) => [newRecipe, ...prev]);
+    console.log("Receita criada com sucesso:", newRecipe);
+  };
 
   return (
     <main className="flex-grow bg-amber-50/40 py-12 px-4">
       <div className="container mx-auto max-w-5xl text-center">
         
-        {/* Cabeçalho responsivo: empilha no celular e fica lado a lado em telas maiores */}
+        {/* Cabeçalho responsivo */}
         <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-4 mb-2">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-amber-950 tracking-tight text-center sm:text-left">
             Todas as Nossas Receitas
@@ -22,9 +37,9 @@ export default function ReceitasPage() {
           <button 
             type="button"
             onClick={() => setIsRecipeModalOpen(true)} 
-            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-amber-800 hover:bg-amber-900 active:scale-95 transition-all text-white font-semibold rounded-lg px-4 py-1.5 shadow-sm text-xs w-full sm:w-auto"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-amber-800 hover:bg-amber-900 active:scale-95 transition-all text-white font-semibold rounded-lg shadow-sm text-xs w-full sm:w-auto cursor-pointer"
           >
-            <Plus size={18} className="text-amber-950" />
+            <Plus size={18} className="text-white" />
             <span>Nova receita</span>
           </button>
         </div>
@@ -35,16 +50,19 @@ export default function ReceitasPage() {
 
         {/* Grid com todas as receitas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
-          {recipes.map((recipe) => (
+          {recipeList.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
         
       </div>
 
+      {/* MODAL COM AS PROPS CORRIGIDAS */}
       <RecipeFormModal 
         isOpen={isRecipeModalOpen} 
         onClose={() => setIsRecipeModalOpen(false)} 
+        onSave={handleSaveRecipe}
+        mode="create"
       />
     </main>
   );

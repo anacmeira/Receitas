@@ -1,6 +1,24 @@
 import Link from "next/link";
+import { Pencil, Trash2 } from "lucide-react";
+import { Recipe } from "@/lib/data";
 
-export default function RecipeCard({ recipe }: { recipe: any }) {
+interface RecipeCardProps {
+  recipe: Recipe;
+  onEdit?: (recipe: Recipe) => void;
+  onDelete?: (recipeId: string) => void;
+}
+
+export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
+  const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onEdit) onEdit(recipe);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onDelete) onDelete(recipe.id);
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-amber-200/60 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col h-full">
       {/* Imagem do Card */}
@@ -28,13 +46,36 @@ export default function RecipeCard({ recipe }: { recipe: any }) {
           {recipe.description}
         </p>
 
-        {/* Link de clique explícito (Evita conflitos de tags do HTML e garante o clique!) */}
-        <Link 
-          href={`/receitas/${recipe.id}`}
-          className="text-xs font-bold text-orange-600 hover:text-orange-700 mt-auto inline-flex items-center gap-1 self-start"
-        >
-          Ver receita completa →
-        </Link>
+        {/* Rodapé do Card: Link + Ações */}
+        <div className="mt-auto pt-3 border-t border-amber-100 flex items-center justify-between">
+          <Link 
+            href={`/receitas/${recipe.id}`}
+            className="text-xs font-bold text-orange-600 hover:text-orange-700 inline-flex items-center gap-1"
+          >
+            Ver receita completa →
+          </Link>
+
+          {/* Botões de Ação (Editar e Excluir) */}
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={handleEdit}
+              title="Editar receita"
+              className="p-1.5 text-amber-700 hover:text-amber-900 hover:bg-amber-100/60 rounded-md transition-colors"
+            >
+              <Pencil size={15} />
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleDelete}
+              title="Excluir receita"
+              className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-md transition-colors"
+            >
+              <Trash2 size={15} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

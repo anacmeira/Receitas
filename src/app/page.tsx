@@ -1,12 +1,21 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { recipes } from "@/lib/data"; 
+import { recipes as initialRecipes, Recipe } from "@/lib/data"; 
 import RecipeCard from "@/components/RecipeCard"; 
 
-export default function Home(){
-  const featuredRecipes = recipes.slice(0, 3);
+export default function Home() {
+  const [recipesList, setRecipesList] = useState<Recipe[]>(initialRecipes);
+  const featuredRecipes = recipesList.slice(0, 3);
 
-  return(
+  // Funções vazias para uso futuro
+  const handleEditRecipe = (recipe: Recipe) => {};
+
+  const handleDeleteRecipe = (recipeId: string) => {};
+
+  return (
     <main className="flex-grow bg-amber-50/40">
       {/* Seção Hero */}
       <section className="bg-amber-100/50 py-4 md:py-6 border-b border-amber-200/60 px-4">
@@ -41,13 +50,18 @@ export default function Home(){
           </Link>
 
           {/* Grid Dinâmico */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
             {featuredRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <RecipeCard 
+                key={recipe.id} 
+                recipe={recipe} 
+                onEdit={handleEditRecipe}
+                onDelete={handleDeleteRecipe}
+              />
             ))}
           </div>
         </div>
       </section>
     </main>
-  )
+  );
 }

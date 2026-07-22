@@ -141,7 +141,8 @@ export default function RecipeFormModal({
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 mt-3 text-left"
-          noValidate>
+          noValidate
+>
           {/* Título e Categoria */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             <div className="flex flex-col">

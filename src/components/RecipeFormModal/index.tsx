@@ -31,7 +31,7 @@ export default function RecipeFormModal({
 
   useEffect(() => {
     if (isOpen) {
-      setErrors({}); 
+      setErrors({});
       if (mode === "edit" && recipe) {
         setTitle(recipe.title || "");
         setCategory(recipe.category || "");
@@ -95,9 +95,12 @@ export default function RecipeFormModal({
     onClose();
   };
 
+  const inputStyle = "w-full px-3 py-2 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500";
+  const btnSecondaryStyle = "px-4 py-2 bg-white border border-amber-200 text-amber-950 rounded-lg hover:bg-amber-100 transition-colors text-sm font-medium h-fit cursor-pointer";
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-amber-50/95 border-amber-200 text-amber-950 w-full max-w-2xl rounded-2xl p-6 shadow-xl">
+      <DialogContent className="bg-amber-50/95 border-amber-200 text-amber-950 w-full max-w-2xl rounded-2xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-extrabold text-amber-950 tracking-tight">
             {mode === "create" ? "Nova receita" : "Editar receita"}
@@ -173,7 +176,7 @@ export default function RecipeFormModal({
               placeholder="/placeholder.svg"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className={inputStyle}
             />
           </div>
 
@@ -188,7 +191,7 @@ export default function RecipeFormModal({
                 placeholder="15 minutos"
                 value={prepTime}
                 onChange={(e) => setPrepTime(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className={inputStyle}
               />
             </div>
 
@@ -201,7 +204,7 @@ export default function RecipeFormModal({
                 placeholder="30 minutos"
                 value={cookTime}
                 onChange={(e) => setCookTime(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className={inputStyle}
               />
             </div>
 
@@ -225,12 +228,54 @@ export default function RecipeFormModal({
             </div>
           </div>
 
+          {/* Lista de Ingredientes */}
+          <div className="flex flex-col gap-2">
+            <label className="block text-xs font-semibold text-amber-950">
+              Ingredientes
+            </label>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2 w-full items-start">
+                <input
+                  type="text"
+                  placeholder="Ex: 2 xícaras de farinha de trigo"
+                  className={inputStyle}
+                />
+                <button type="button" className={btnSecondaryStyle}>
+                  Remover
+                </button>
+              </div>
+
+              <button type="button" className={`${btnSecondaryStyle} w-fit`}>
+                Adicionar ingrediente
+              </button>
+            </div>
+          </div>
+
+          {/* Lista de Instruções */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="instructions" className="block text-xs font-semibold text-amber-950">
+              Instruções
+            </label>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2 w-full items-start">
+                <textarea id="instructions" rows={2} className={inputStyle} />
+                <button type="button" className={btnSecondaryStyle}>
+                  Remover
+                </button>
+              </div>
+
+              <button type="button" className={`${btnSecondaryStyle} w-fit`}>
+                Adicionar instrução
+              </button>
+            </div>
+          </div>
+
           {/* Botões do Rodapé */}
           <div className="flex justify-end gap-2 pt-3 mt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-amber-200 text-amber-950 bg-white hover:bg-amber-100 font-medium text-sm transition-colors cursor-pointer"
+              className={btnSecondaryStyle}
             >
               Cancelar
             </button>

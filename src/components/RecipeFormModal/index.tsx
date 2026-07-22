@@ -64,6 +64,15 @@ export default function RecipeFormModal({
     name: "instructions",
   });
 
+  // Função segura para fechar o modal
+  const handleSafeClose = () => {
+    if (typeof onClose === "function") {
+      onClose();
+    } else {
+      console.warn("RecipeFormModal: A prop 'onClose' não foi fornecida.");
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       if (mode === "edit" && recipe) {
@@ -71,7 +80,7 @@ export default function RecipeFormModal({
 
         reset({
           ...restRecipe,
-          imageURL: image,
+          imageURL: image ?? "",
           ingredients:
             recipe.ingredients && recipe.ingredients.length > 0
               ? recipe.ingredients.map((ing) => ({ value: ing }))
@@ -101,22 +110,27 @@ export default function RecipeFormModal({
         .filter((val) => val !== ""),
     };
 
-    onSave(
-      mode === "edit" && recipe ? { ...recipeData, id: recipe.id } : recipeData
-    );
+    // Chamada segura do onSave
+    if (typeof onSave === "function") {
+      onSave(
+        mode === "edit" && recipe ? { ...recipeData, id: recipe.id } : recipeData
+      );
+    } else {
+      console.error("RecipeFormModal: A prop 'onSave' não é uma função válida.");
+    }
+
     reset(DEFAULT_VALUES);
-    onClose();
+    handleSafeClose();
   };
 
-  // Altura fixa h-[42px] + box-border garante que todos os inputs fiquem idênticos
   const inputStyle =
     "w-full h-[42px] px-3.5 py-2.5 bg-white border border-amber-200 rounded-lg text-amber-950 text-sm placeholder-amber-900/30 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-normal box-border";
-  
+
   const btnSecondaryStyle =
     "px-4 py-2.5 bg-white border border-amber-200 text-amber-950 rounded-lg hover:bg-amber-100 transition-colors text-sm font-medium leading-normal cursor-pointer whitespace-nowrap shrink-0";
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleSafeClose}>
       <DialogContent className="bg-amber-50/95 border-amber-200 text-amber-950 w-[95vw] max-w-6xl rounded-2xl p-8 shadow-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-extrabold text-amber-950 tracking-tight">
@@ -127,8 +141,7 @@ export default function RecipeFormModal({
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 mt-3 text-left"
-          noValidate
-        >
+          noValidate>
           {/* Título e Categoria */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             <div className="flex flex-col">
@@ -195,7 +208,7 @@ export default function RecipeFormModal({
             )}
           </div>
 
-          {/* Tempos e Porções (Alinhados perfeitamente na base com items-end) */}
+          {/* Tempos e Porções */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             <div className="flex flex-col justify-end">
               <label htmlFor="prepTime" className="text-xs font-semibold text-amber-950 mb-1.5">
@@ -337,7 +350,7 @@ export default function RecipeFormModal({
           <div className="flex items-center justify-end gap-3 pt-5 mt-6 border-t border-amber-200/60">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleSafeClose}
               className={btnSecondaryStyle}
             >
               Cancelar

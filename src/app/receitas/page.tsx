@@ -8,21 +8,44 @@ import { recipes as initialRecipes, Recipe } from "@/lib/data";
 
 export default function ReceitasPage() {
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
-  // Estado para armazenar e atualizar a lista de receitas na tela
   const [recipeList, setRecipeList] = useState<Recipe[]>(initialRecipes);
+  const [modalMode, setMoldalMode] = useState<"create" | "edit">("create")
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | undefined>(undefined)
 
-  // Função para salvar a nova receita
+  const handleOpenCreateModal = () => {
+    setMoldalMode("create")
+    setSelectedRecipe(undefined)
+    setIsRecipeModalOpen(true)
+  };
+
+  const handleOpenEditModal = (recipe: Recipe) => {
+    setMoldalMode("edit")
+    setSelectedRecipe(recipe)
+    setIsRecipeModalOpen(true)
+  };
+
+  const handleCloseModal = () => {
+    setIsRecipeModalOpen(false)
+  };
+
   const handleSaveRecipe = (newRecipeData: Omit<Recipe, "id"> | Recipe) => {
-    // Cria uma receita com ID gerado para a lista
+  if (modalMode === "create") {
     const newRecipe: Recipe = {
       ...newRecipeData,
       id: "id" in newRecipeData ? newRecipeData.id : String(Date.now()),
     };
-
-    // Adiciona a receita na lista existente
-    setRecipeList((prev) => [newRecipe, ...prev]);
-    console.log("Receita criada com sucesso:", newRecipe);
-  };
+    setRecipeList((prev) => [...prev, newRecipe]);
+  } else {
+    // Modo "edit"
+    const updatedRecipe = newRecipeData as Recipe;
+    setRecipeList((prev) =>
+      prev.map((recipe) =>
+        recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+      )
+    );
+  }
+  handleCloseModal();
+};
 
   return (
     <main className="flex-grow bg-amber-50/40 py-12 px-4">
@@ -36,7 +59,7 @@ export default function ReceitasPage() {
 
           <button 
             type="button"
-            onClick={() => setIsRecipeModalOpen(true)} 
+            onClick={handleOpenCreateModal} 
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-amber-800 hover:bg-amber-900 active:scale-95 transition-all text-white font-semibold rounded-lg shadow-sm text-xs w-full sm:w-auto cursor-pointer"
           >
             <Plus size={18} className="text-white" />
@@ -51,18 +74,19 @@ export default function ReceitasPage() {
         {/* Grid com todas as receitas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
           {recipeList.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
+            <RecipeCard key={recipe.id} recipe={recipe} onEdit={() => handleOpenEditModal(recipe)}/>
           ))}
         </div>
         
       </div>
 
-      {/* MODAL COM AS PROPS CORRIGIDAS */}
+      {/* MODAL COM AS PROPS*/}
       <RecipeFormModal 
         isOpen={isRecipeModalOpen} 
-        onClose={() => setIsRecipeModalOpen(false)} 
+        onClose={handleCloseModal} 
         onSave={handleSaveRecipe}
-        mode="create"
+        mode={modalMode}
+        recipe={selectedRecipe}
       />
     </main>
   );

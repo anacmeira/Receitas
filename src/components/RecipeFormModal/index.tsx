@@ -64,7 +64,7 @@ export default function RecipeFormModal({
     name: "instructions",
   });
 
-  // Função segura para fechar o modal
+  // Função  para fechar o modal
   const handleSafeClose = () => {
     if (typeof onClose === "function") {
       onClose();
@@ -73,28 +73,21 @@ export default function RecipeFormModal({
     }
   };
 
+ 
   useEffect(() => {
-    if (isOpen) {
-      if (mode === "edit" && recipe) {
-        const { image, ...restRecipe } = recipe;
-
-        reset({
-          ...restRecipe,
-          imageURL: image ?? "",
-          ingredients:
-            recipe.ingredients && recipe.ingredients.length > 0
-              ? recipe.ingredients.map((ing) => ({ value: ing }))
-              : [{ value: "" }],
-          instructions:
-            recipe.instructions && recipe.instructions.length > 0
-              ? recipe.instructions.map((inst) => ({ value: inst }))
-              : [{ value: "" }],
-        });
-      } else {
-        reset(DEFAULT_VALUES);
-      }
+  if (isOpen) {
+    if (mode === "edit" && recipe) {
+      reset({
+        ...recipe,
+        imageURL: recipe.image || "",
+        ingredients: recipe.ingredients.map((ing) => ({ value: ing })),
+        instructions: recipe.instructions.map((inst) => ({ value: inst })),
+      });
+    } else {
+      reset(DEFAULT_VALUES);
     }
-  }, [mode, isOpen, recipe, reset]);
+  }
+}, [mode, isOpen, recipe, reset]);
 
   const onSubmit: SubmitHandler<RecipeFormData> = (data) => {
     const { imageURL, ingredients, instructions, ...restData } = data;

@@ -4,18 +4,23 @@ import { Recipe } from "@/lib/data";
 
 interface RecipeCardProps {
   recipe: Recipe;
-  onEdit: () => void;
+  onEdit?: () => void;
   onDelete?: (recipeId: string) => void;
 }
 
-export default function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
+export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    onEdit();
+    if (onEdit) {
+      onEdit();
+    }
   };
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (onDelete) {
+      onDelete(recipe.id);
+    }
   };
 
   return (
@@ -54,26 +59,31 @@ export default function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
             Ver receita completa →
           </Link>
 
-          {/* Botões de Ação (Editar e Excluir) */}
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={handleEdit}
-              title="Editar receita"
-              className="p-1.5 text-amber-700 hover:text-amber-900 hover:bg-amber-100/60 rounded-md transition-colors"
-            >
-              <Pencil size={15} />
-            </button>
-            
-            <button
-              type="button"
-              onClick={handleDelete}
-              title="Excluir receita"
-              className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-md transition-colors"
-            >
-              <Trash2 size={15} />
-            </button>
-          </div>
+          {(onEdit || onDelete) && (
+            <div className="flex items-center gap-1">
+              {onEdit && (
+                <button
+                  type="button"
+                  onClick={handleEdit}
+                  title="Editar receita"
+                  className="p-1.5 text-amber-700 hover:text-amber-900 hover:bg-amber-100/60 rounded-md transition-colors cursor-pointer"
+                >
+                  <Pencil size={15} />
+                </button>
+              )}
+              
+              {onDelete && (
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  title="Excluir receita"
+                  className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-md transition-colors cursor-pointer"
+                >
+                  <Trash2 size={15} />
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

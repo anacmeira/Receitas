@@ -7,11 +7,8 @@ import { recipes as initialRecipes, Recipe } from "@/lib/data";
 import RecipeCard from "@/components/RecipeCard"; 
 
 export default function Home() {
-  const [recipesList, setRecipesList] = useState<Recipe[]>(initialRecipes);
+  const [recipesList] = useState<Recipe[]>(initialRecipes);
   const featuredRecipes = recipesList.slice(0, 3);
-
-  const handleEditRecipe = () => {};
-  const handleDeleteRecipe = () => {};
 
   return (
     <main className="flex-grow bg-amber-50/40">
@@ -53,8 +50,6 @@ export default function Home() {
               <RecipeCard 
                 key={recipe.id} 
                 recipe={recipe} 
-                onEdit={handleEditRecipe}
-                onDelete={handleDeleteRecipe}
               />
             ))}
           </div>

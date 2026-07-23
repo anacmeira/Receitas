@@ -9,43 +9,46 @@ import { recipes as initialRecipes, Recipe } from "@/lib/data";
 export default function ReceitasPage() {
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
   const [recipeList, setRecipeList] = useState<Recipe[]>(initialRecipes);
-  const [modalMode, setMoldalMode] = useState<"create" | "edit">("create")
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | undefined>(undefined)
+  const [modalMode, setMoldalMode] = useState<"create" | "edit">("create");
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | undefined>(undefined);
 
   const handleOpenCreateModal = () => {
-    setMoldalMode("create")
-    setSelectedRecipe(undefined)
-    setIsRecipeModalOpen(true)
+    setMoldalMode("create");
+    setSelectedRecipe(undefined);
+    setIsRecipeModalOpen(true);
   };
 
   const handleOpenEditModal = (recipe: Recipe) => {
-    setMoldalMode("edit")
-    setSelectedRecipe(recipe)
-    setIsRecipeModalOpen(true)
+    setMoldalMode("edit");
+    setSelectedRecipe(recipe);
+    setIsRecipeModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsRecipeModalOpen(false)
+    setIsRecipeModalOpen(false);
+  };
+
+  const handleDeleteRecipe = (recipeId: string) => {
   };
 
   const handleSaveRecipe = (newRecipeData: Omit<Recipe, "id"> | Recipe) => {
-  if (modalMode === "create") {
-    const newRecipe: Recipe = {
-      ...newRecipeData,
-      id: "id" in newRecipeData ? newRecipeData.id : String(Date.now()),
-    };
-    setRecipeList((prev) => [...prev, newRecipe]);
-  } else {
-    // Modo "edit"
-    const updatedRecipe = newRecipeData as Recipe;
-    setRecipeList((prev) =>
-      prev.map((recipe) =>
-        recipe.id === updatedRecipe.id ? updatedRecipe : recipe
-      )
-    );
-  }
-  handleCloseModal();
-};
+    if (modalMode === "create") {
+      const newRecipe: Recipe = {
+        ...newRecipeData,
+        id: "id" in newRecipeData ? newRecipeData.id : String(Date.now()),
+      };
+      setRecipeList((prev) => [...prev, newRecipe]);
+    } else {
+      // Modo "edit"
+      const updatedRecipe = newRecipeData as Recipe;
+      setRecipeList((prev) =>
+        prev.map((recipe) =>
+          recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+        )
+      );
+    }
+    handleCloseModal();
+  };
 
   return (
     <main className="flex-grow bg-amber-50/40 py-12 px-4">
@@ -74,13 +77,18 @@ export default function ReceitasPage() {
         {/* Grid com todas as receitas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
           {recipeList.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} onEdit={() => handleOpenEditModal(recipe)}/>
+            <RecipeCard 
+              key={recipe.id} 
+              recipe={recipe} 
+              onEdit={() => handleOpenEditModal(recipe)}
+              onDelete={handleDeleteRecipe} 
+            />
           ))}
         </div>
         
       </div>
 
-      {/* MODAL COM AS PROPS*/}
+      {/* MODAL COM AS PROPS */}
       <RecipeFormModal 
         isOpen={isRecipeModalOpen} 
         onClose={handleCloseModal} 

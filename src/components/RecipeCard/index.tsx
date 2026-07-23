@@ -18,9 +18,9 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (onDelete) {
-      onDelete(recipe.id);
-    }
+   if (onDelete) {
+    onDelete(recipe.id);
+  }
   };
 
   return (

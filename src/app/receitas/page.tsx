@@ -5,9 +5,11 @@ import { Plus } from "lucide-react";
 import RecipeCard from "@/components/RecipeCard";
 import RecipeFormModal from "@/components/RecipeFormModal";
 import { recipes as initialRecipes, Recipe } from "@/lib/data";
+import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 
 export default function ReceitasPage() {
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [isDeleteConfirmationModalOpen, setIsDeleteConfirmationModalOpen] = useState(false);
   const [recipeList, setRecipeList] = useState<Recipe[]>(initialRecipes);
   const [modalMode, setMoldalMode] = useState<"create" | "edit">("create");
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | undefined>(undefined);
@@ -28,9 +30,7 @@ export default function ReceitasPage() {
     setIsRecipeModalOpen(false);
   };
 
-  const handleDeleteRecipe = (recipeId: string) => {
-  };
-
+  
   const handleSaveRecipe = (newRecipeData: Omit<Recipe, "id"> | Recipe) => {
     if (modalMode === "create") {
       const newRecipe: Recipe = {
@@ -49,6 +49,20 @@ export default function ReceitasPage() {
     }
     handleCloseModal();
   };
+
+  const handleOpenDeleteConfirmationModal = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    setIsDeleteConfirmationModalOpen(true);
+  }
+
+  const handleDeleteRecipe = () => {
+    if(selectedRecipe){
+      setRecipeList((prev) => prev.filter((recipe) => recipe.id !== selectedRecipe.id))
+      setIsDeleteConfirmationModalOpen(false)
+      setSelectedRecipe(undefined)
+    }
+  };
+
 
   return (
     <main className="flex-grow bg-amber-50/40 py-12 px-4">
@@ -81,7 +95,7 @@ export default function ReceitasPage() {
               key={recipe.id} 
               recipe={recipe} 
               onEdit={() => handleOpenEditModal(recipe)}
-              onDelete={handleDeleteRecipe} 
+              onDelete={() => handleOpenDeleteConfirmationModal(recipe)} 
             />
           ))}
         </div>
@@ -94,6 +108,14 @@ export default function ReceitasPage() {
         onClose={handleCloseModal} 
         onSave={handleSaveRecipe}
         mode={modalMode}
+        recipe={selectedRecipe}
+      />
+
+      {/*MODAL PARA DELETE */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteConfirmationModalOpen}
+        onClose={() => setIsDeleteConfirmationModalOpen(false)}
+        onConfirm={handleDeleteRecipe}
         recipe={selectedRecipe}
       />
     </main>

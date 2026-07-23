@@ -10,10 +10,8 @@ export default function Home() {
   const [recipesList, setRecipesList] = useState<Recipe[]>(initialRecipes);
   const featuredRecipes = recipesList.slice(0, 3);
 
-  // Funções vazias para uso futuro
-  const handleEditRecipe = (recipe: Recipe) => {};
-
-  const handleDeleteRecipe = (recipeId: string) => {};
+  const handleEditRecipe = () => {};
+  const handleDeleteRecipe = () => {};
 
   return (
     <main className="flex-grow bg-amber-50/40">

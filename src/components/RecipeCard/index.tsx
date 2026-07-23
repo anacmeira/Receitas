@@ -4,19 +4,18 @@ import { Recipe } from "@/lib/data";
 
 interface RecipeCardProps {
   recipe: Recipe;
-  onEdit?: (recipe: Recipe) => void;
+  onEdit: () => void;
   onDelete?: (recipeId: string) => void;
 }
 
-export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
-  const handleEdit = (e: React.MouseEvent) => {
+export default function RecipeCard({ recipe, onEdit }: RecipeCardProps) {
+  const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (onEdit) onEdit(recipe);
+    onEdit();
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (onDelete) onDelete(recipe.id);
   };
 
   return (
